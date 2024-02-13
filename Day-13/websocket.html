@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Test</title>
+</head>
+<body>
+  <script>
+    const socket = new WebSocket('ws://localhost:3000');
+    socket.onopen = function(event) {
+      console.log('WebSocket connection established');
+    };
+    socket.onmessage = function(event) {
+      console.log('Received message:', event.data);
+    };
+    socket.onclose = function(event) {
+      console.log('WebSocket connection closed');
+    };
+
+    // Send a test message to the server
+    setTimeout(() => {
+      socket.send('Hello, WebSocket!');
+    }, 1000);
+  </script>
+</body>
+</html>
