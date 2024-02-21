@@ -1,51 +1,51 @@
+require("dotenv").config();
 const express = require('express');
 const mongoose = require('mongoose');
 
-// Initialize Express
 const app = express();
 
-// Define the Mongoose schema
+const mongoURI = process.env.mongoDB_URI;
+
+// Define the Mongoose schema for the "User"
 const userSchema = new mongoose.Schema({
-  username: String,
-  email: String
+  username: { type: String, required: true },
+  email: { type: String, required: true },
+  age: { type: Number, required: true }
 });
 
-// Create the Mongoose model
+// Create a Mongoose model for the User schema
 const User = mongoose.model('User', userSchema);
 
-// Connect Mongoose to your MongoDB database
-mongoose.connect('mongodb://127.0.0.1/mydatabase', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log("Connected to MongoDB");
-}).catch((err) => {
-  console.error("Error connecting to MongoDB:", err);
-});
-
-// Function to add a new user to the MongoDB database
-async function addUserToDatabase(user) {
-  try {
-    // Create a new User object using the provided user data
-    const newUser = new User(user);
-    
-    // Save the user to the database
-    await newUser.save();
-    
-    console.log("User added successfully");
-  } catch (error) {
-    console.error("Error adding user:", error);
-  }
+function connectToMongoDB() {
+  mongoose.connect(mongoURI)
+    .then(() => console.log('Successfully connected to MongoDB'))
+    .catch(error => console.error('MongoDB connection error:', error));
 }
 
-// Add route to handle adding a new user
-app.post('/users', (req, res) => {
-  const { username, email } = req.body;
-  addUserToDatabase({ username, email });
-  res.send('User added successfully');
+connectToMongoDB();
+
+// Implement the function to add a new user to the MongoDB database
+function addUserToDatabase(user) {
+  const newUser = new User(user);
+  newUser.save()
+    .then(() => console.log('User added successfully'))
+    .catch(error => console.error('Error adding user:', error));
+}
+
+// Example route to test adding a new user
+app.get('/addUser', (req, res) => {
+  addUserToDatabase({ username: 'John Doe', email: 'john@example.com', age: 30 });
+  addUserToDatabase({ username: 'Alice Smith', email: 'alice@example.com', age: 25 });
+  addUserToDatabase({ username: 'Bob Johnson', email: 'bob@example.com', age: 35 });
+  addUserToDatabase({ username: 'Emily Brown', email: 'emily@example.com', age: 28 });
+  addUserToDatabase({ username: 'Michael Davis', email: 'michael@example.com', age: 40 });
+  res.send('New users added!');
 });
 
-// Start the server
+app.get('/', (req, res) => {
+  res.send('30 days nodejs');
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
