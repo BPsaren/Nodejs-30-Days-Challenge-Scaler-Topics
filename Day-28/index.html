@@ -1,0 +1,43 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Demo</title>
+</head>
+<body>
+  <div>
+    <h1>Welcome to the collaborative editing tool!</h1>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type your message">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  const ws = new WebSocket('ws://localhost:3000');
+
+  ws.onmessage = (event) => {
+      const messagesContainer = document.getElementById('messages');
+      const message = document.createElement('div');
+      message.textContent = event.data;
+      messagesContainer.appendChild(message);
+
+      console.log('Received message:', event.data);
+  };
+
+  function sendMessage() {
+      const messageInput = document.getElementById('messageInput');
+      const message = messageInput.value;
+      ws.send(message);
+
+      // Clear the input field after sending
+      messageInput.value = '';
+  }
+</script>
+
+       <h1> DAY 28 </h1>
+       <h2>30 Days NodeJs Challenge</h2>
+       <h3>WINKUNNU_65631</h3>
+</body>
+</html>
